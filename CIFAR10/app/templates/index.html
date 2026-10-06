@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}CIFAR Vision AI | Image Classifier{% endblock %}
+{% block body %}
+<header class="topbar wrap">
+  <a class="brand" href="/" aria-label="CIFAR Vision AI home">
+    <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <span>CIFAR <b>VISION</b></span>
+  </a>
+  <div class="topbar-meta"><span class="live-dot"></span><span>IMAGE INTELLIGENCE</span><span class="dataset-pill">CIFAR-10 <span>·</span> 32 × 32</span></div>
+</header>
+
+<main>
+  <section class="intro wrap" aria-labelledby="page-title">
+    <div class="intro-copy">
+      <p class="eyebrow"><span class="eyebrow-line"></span> SMALL IMAGE, BIG IDEAS</p>
+      <h1 id="page-title">See what the<br><em>model sees.</em></h1>
+      <p class="intro-text">Drop in an image. A compact neural network finds its closest match across ten familiar categories.</p>
+      <div class="model-note"><span class="pulse-ring" aria-hidden="true"></span><span>TensorFlow-powered <b>·</b> CIFAR-10 model</span></div>
+    </div>
+    <div class="class-orbit" aria-label="Ten image categories represented by the model">
+      <div class="orbit-label">10 CLASSES <span>·</span> ONE MODEL</div>
+      <div class="orbit-core"><span class="core-spark">✳</span><small>VISION<br>CORE</small></div>
+      <span class="orbit-node node-a">AIR</span><span class="orbit-node node-b">AUTO</span>
+      <span class="orbit-node node-c">BIRD</span><span class="orbit-node node-d">CAT</span>
+      <span class="orbit-node node-e">DEER</span><span class="orbit-node node-f">DOG</span>
+      <span class="orbit-node node-g">FROG</span><span class="orbit-node node-h">HORSE</span>
+      <span class="orbit-node node-i">SHIP</span><span class="orbit-node node-j">TRUCK</span>
+    </div>
+  </section>
+
+  <section class="workspace wrap" aria-label="Image classification">
+    <article class="panel upload-panel">
+      <div class="panel-heading">
+        <div><span class="step-index">01</span><h2>Your image</h2></div>
+        <span class="panel-kicker">INPUT</span>
+      </div>
+      <input id="image-input" class="visually-hidden" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" aria-label="Choose an image to classify">
+      <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-controls="image-input" aria-label="Upload an image. JPG, PNG, or WEBP, up to 5 megabytes.">
+        <div class="drop-empty" id="drop-empty">
+          <div class="upload-glyph" aria-hidden="true"><span>↑</span></div>
+          <h3>Bring an image into focus</h3>
+          <p>Drag it here, or <button type="button" class="text-button" id="browse-button">browse files</button></p>
+          <span class="file-rules">JPG · PNG · WEBP <b>/</b> MAX 5 MB</span>
+        </div>
+        <div class="preview-state" id="preview-state" hidden>
+          <div class="preview-frame"><img id="image-preview" alt="Selected image preview"></div>
+          <div class="file-details"><div><strong id="file-name"></strong><span id="image-dimensions"></span></div><span id="file-size"></span></div>
+        </div>
+      </div>
+      <p class="upload-error" id="upload-error" role="alert" hidden></p>
+      <div class="upload-actions">
+        <button type="button" class="button button-quiet" id="clear-button" disabled><span aria-hidden="true">×</span> Clear</button>
+        <button type="button" class="button button-primary" id="predict-button" disabled><span class="button-spark" aria-hidden="true">✳</span> Predict image <span class="button-arrow" aria-hidden="true">↗</span></button>
+      </div>
+      <p class="privacy-note"><span aria-hidden="true">◈</span> Processed in memory. Your image is never stored.</p>
+    </article>
+
+    <article class="panel result-panel" id="result-panel" aria-live="polite" aria-busy="false">
+      <div class="panel-heading">
+        <div><span class="step-index">02</span><h2>Model response</h2></div>
+        <span class="panel-kicker" id="result-status">AWAITING IMAGE</span>
+      </div>
+      <div class="result-empty" id="result-empty">
+        <div class="empty-coordinate" aria-hidden="true"><span></span><i></i><b>?</b></div>
+        <p>Your prediction will<br>appear here.</p>
+        <small>One image · Ten possibilities</small>
+      </div>
+      <div class="loading-state" id="loading-state" hidden>
+        <div class="scan-visual" aria-hidden="true"><span class="scan-beam"></span><span class="scan-cross">✳</span></div>
+        <p>Reading visual patterns<span class="loading-dots">...</span></p>
+        <small>Comparing against 10 classes</small>
+      </div>
+      <div class="prediction-state" id="prediction-state" hidden>
+        <div class="prediction-main">
+          <div class="prediction-copy"><span class="result-overline">CLOSEST MATCH</span><h3 id="predicted-class">DOG</h3><p>Highest probability class</p></div>
+          <div class="confidence-ring" id="confidence-ring" role="img" aria-label="Prediction confidence"><div><strong id="confidence-value">0%</strong><span>CONFIDENCE</span></div></div>
+        </div>
+        <div class="top-predictions-heading"><span>OTHER POSSIBILITIES</span><span>PROBABILITY</span></div>
+        <ol class="prediction-list" id="prediction-list"></ol>
+        <p class="model-caveat">CIFAR-10 works best with images resembling its low-resolution training categories.</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="samples wrap" aria-labelledby="samples-title">
+    <div class="samples-heading"><div><p class="eyebrow"><span class="eyebrow-line"></span> QUICK START</p><h2 id="samples-title">Try a real CIFAR-10 image</h2></div><p>One example from each class. Download one, then upload it above.</p></div>
+    <div class="sample-grid">{% for name in sample_images %}<a class="sample-download" href="{{ url_for('static', filename='samples/' ~ name ~ '.png') }}" download="cifar10-{{ name }}.png" aria-label="Download CIFAR-10 {{ name }} sample"><img src="{{ url_for('static', filename='samples/' ~ name ~ '.png') }}" alt="CIFAR-10 {{ name }} example"><span>{{ name }}</span><b aria-hidden="true">↓</b></a>{% endfor %}</div>
+  </section>
+
+  <section class="about wrap">
+    <div class="about-heading"><p class="eyebrow"><span class="eyebrow-line"></span> THE DATASET</p><h2>Ten classes.<br><em>Sixty thousand images.</em></h2></div>
+    <div class="about-content"><p>CIFAR-10 is a widely used image classification dataset of 60,000 tiny colour images, each just 32 × 32 pixels. Uploaded images are resized and normalized to match what the model learned.</p><div class="class-list" aria-label="CIFAR-10 classes">{% for name in classes %}<span>{{ name }}</span>{% endfor %}</div></div>
+  </section>
+</main>
+
+<footer class="footer wrap"><a class="brand footer-brand" href="/" aria-label="CIFAR Vision AI home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>CIFAR <b>VISION</b></span></a><span>BUILT WITH PYTHON · FLASK · TENSORFLOW</span><span>© 2026 CIFAR VISION AI</span></footer>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/app.js') }}" defer></script>{% endblock %}

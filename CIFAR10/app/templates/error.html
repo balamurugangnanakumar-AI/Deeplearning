@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Something went wrong | CIFAR Vision AI{% endblock %}
+{% block body %}
+<main class="error-page wrap"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>CIFAR <b>VISION</b></span></a><p class="eyebrow">REQUEST INTERRUPTED</p><h1>We lost the signal.</h1><p>{{ message }}</p><a class="button button-primary" href="/">Return to classifier <span aria-hidden="true">↗</span></a></main>
+{% endblock %}

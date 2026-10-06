@@ -1,0 +1,13 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+logs/*.log
+data/
+models/*.keras
+!models/cifar10_model.keras
+models/*.h5
+uploads/*
+!uploads/.gitkeep
